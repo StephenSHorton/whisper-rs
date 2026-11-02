@@ -314,7 +314,9 @@ fn main() {
         println!("cargo:rustc-link-lib=static=ggml-base");
         println!("cargo:rustc-link-lib=static=ggml-cpu");
     }
-    if cfg!(target_os = "macos") || cfg!(feature = "openblas") {
+    // A build script runs on the host: ask Cargo for the target, so a
+    // cross build from macOS (e.g. for Android) does not link ggml-blas.
+    if env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("macos") || cfg!(feature = "openblas") {
         println!("cargo:rustc-link-lib=static=ggml-blas");
     }
     if cfg!(feature = "vulkan") {
